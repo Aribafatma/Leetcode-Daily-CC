@@ -1,0 +1,62 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+    int sortableIntegers(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> divisors;
+        
+        // Step 1: Find all divisors of n in O(sqrt(n))
+        for (int i = 1; i * i <= n; ++i) {
+            if (n % i == 0) {
+                divisors.push_back(i);
+                if (i * i != n) {
+                    divisors.push_back(n / i);
+                }
+            }
+        }
+        
+        int total_sum = 0;
+        
+        // Step 2: Check each divisor k
+        for (int k : divisors) {
+            bool is_valid_k = true;
+            int prev_block_max = -1;
+            
+            for (int i = 0; i < n; i += k) {
+                int current_min = nums[i];
+                int current_max = nums[i];
+                int circular_drop_offs = 0;
+                
+                // Analyze the current block of size k
+                for (int j = 0; j < k; ++j) {
+                    int current_idx = i + j;
+                    int next_idx = i + (j + 1) % k; // Wrap around within the block
+                    
+                    if (nums[current_idx] > nums[next_idx]) {
+                        circular_drop_offs++;
+                    }
+                    
+                    current_min = min(current_min, nums[current_idx]);
+                    current_max = max(current_max, nums[current_idx]);
+                }
+                
+                // 1. Each block must have at most 1 circular drop-off to be cyclically sortable
+                // 2. The maximum of the previous block must be <= the minimum of the current block
+                if (circular_drop_offs > 1 || (prev_block_max != -1 && prev_block_max > current_min)) {
+                    is_valid_k = false;
+                    break;
+                }
+                
+                prev_block_max = current_max;
+            }
+            
+            if (is_valid_k) {
+                total_sum += k;
+            }
+        }
+        
+        return total_sum;
+    }
+};
