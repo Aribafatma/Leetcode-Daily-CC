@@ -1,0 +1,41 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+    int minOperations(string s) {
+        int n = s.size();
+        
+        // Step 1: Check if the string is already sorted
+        bool isSorted = true;
+        for (int i = 1; i < n; ++i) {
+            if (s[i] < s[i - 1]) {
+                isSorted = false;
+                break;
+            }
+        }
+        if (isSorted) return 0;
+        
+        // Step 2: Edge case for length 2
+        if (n == 2) return -1;
+        
+        // Step 3: Find the global minimum and maximum elements
+        char mn = *min_element(s.begin(), s.end());
+        char mx = *max_element(s.begin(), s.end());
+        
+        // Step 4: Check if an extreme is already at its correct end
+        if (s[0] == mn || s[n - 1] == mx) {
+            return 1;
+        }
+        
+        // Step 5: Check if an extreme is anywhere strictly inside the string
+        for (int i = 1; i < n - 1; ++i) {
+            if (s[i] == mn || s[i] == mx) {
+                return 2;
+            }
+        }
+        
+        // Step 6: Minimum is at the last index and Maximum is at the first index
+        return 3;
+    }
+};
