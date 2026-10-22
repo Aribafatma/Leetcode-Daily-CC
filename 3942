@@ -1,0 +1,47 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+    int minOperations(vector<int>& nums) {
+        int n = nums.size();
+        int zero = -1;
+        
+        // Find the index of 0
+        for (int i = 0; i < n; ++i) {
+            if (nums[i] == 0) {
+                zero = i;
+                break;
+            }
+        }
+        
+        // Lambda function to check if the array is sorted cyclically in a given direction
+        auto check = [&](int step) {
+            for (int i = 1; i < n; ++i) {
+                int prev = (zero + (i - 1) * step + n) % n;
+                int curr = (zero + i * step + n) % n;
+                if (nums[prev] > nums[curr]) {
+                    return false;
+                }
+            }
+            return true;
+        };
+        
+        int ans = 1e9;
+        
+        // Case 1: Array is cyclically increasing
+        if (check(1)) {
+            ans = min(ans, zero);           // Rotate left directly
+            ans = min(ans, n - zero + 2);   // Reverse, rotate left, reverse back
+        }
+        
+        // Case 2: Array is cyclically decreasing
+        if (check(-1)) {
+            ans = min(ans, zero + 2);       // Rotate left, then reverse
+            ans = min(ans, n - zero);       // Reverse first, then rotate left
+        }
+        
+        // If ans is still infinity, it's impossible to sort the permutation
+        return (ans == 1e9) ? -1 : ans;
+    }
+};
