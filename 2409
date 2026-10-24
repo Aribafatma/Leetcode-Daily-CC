@@ -1,0 +1,29 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+    int countDaysTogether(string arriveAlice, string leaveAlice, string arriveBob, string leaveBob) {
+        vector<int> daysInMonth = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+        
+        auto dateToDayOfYear = [&](string dateStr) {
+            int month = stoi(dateStr.substr(0, 2));
+            int day = stoi(dateStr.substr(3, 2));
+            int totalDays = 0;
+            for (int i = 0; i < month - 1; ++i) {
+                totalDays += daysInMonth[i];
+            }
+            return totalDays + day;
+        };
+
+        int startA = dateToDayOfYear(arriveAlice);
+        int endA = dateToDayOfYear(leaveAlice);
+        int startB = dateToDayOfYear(arriveBob);
+        int endB = dateToDayOfYear(leaveBob);
+
+        int overlapStart = max(startA, startB);
+        int overlapEnd = min(endA, endB);
+
+        return max(0, overlapEnd - overlapStart + 1);
+    }
+};
